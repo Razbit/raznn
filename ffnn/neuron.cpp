@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility>
+#include <math.h>
 
 /* constructor */
 Neuron::Neuron()
@@ -19,7 +20,6 @@ Neuron::~Neuron()
 void Neuron::connect(Neuron* neuron, double weight)
 {
 	inputs.push_back(std::make_pair(neuron, weight));
-	n_inputs++;
 }
 
 void Neuron::disconnect(Neuron* neuron)
@@ -30,7 +30,6 @@ void Neuron::disconnect(Neuron* neuron)
 		if (inputs.at(i).first == neuron)
 		{
 			inputs.erase(inputs.begin()+i);
-			n_inputs--;
 			break;
 		}
 	}
@@ -41,14 +40,21 @@ void Neuron::set_value(double val)
 	value = val;
 }
 
-void Neuron::set_weight(int index, double weight)
+void Neuron::set_weight(Neuron* neuron, double weight)
 {
-	weights[index] = weight;
+	for (int i = 0; i < inputs.size(); i++)
+	{
+		if (inputs.at(i).first == neuron)
+		{
+			inputs.at(i).second = weight;
+			break;
+		}
+	}
 }
 
-void Neuron::set_inputs(int n)
+void Neuron::set_weight_i(int index, double weight)
 {
-	n_inputs = n;
+	inputs.at(index).second = weight;
 }
 
 double Neuron::get_value()
@@ -56,12 +62,40 @@ double Neuron::get_value()
 	return value;
 }
 
-double Neuron::get_weight(int index)
+double Neuron::get_weight(Neuron* neuron)
 {
-	return weights[index];
+	for (int i = 0; i < inputs.size(); i++)
+	{
+		if (inputs.at(i).first == neuron)
+		{
+			return inputs.at(i).second;
+		}
+	}
 }
 
-double* Neuron::get_weights()
+double* Neuron::get_weight_i(int index)
 {
-	return weights;
+	return inputs.at(index).second;
+}
+
+void Neuron::activation()
+{
+	/* calculate weighted sum of the inputs */
+	double sum = 0.0;
+	
+	for (int i = 0; i < inputs.size(); i++)
+		sum += inputs.at(i).second * inputs.at(i).first->get_value();
+
+	/* activate using sigmoid function */
+	value = 1/(1+exp(-sum));
+}
+
+inline int Neuron::clamp()
+{
+	if (value > 0.9)
+		return 1;
+	else if (value < 0.1)
+		return 0;
+	else
+		return -1;
 }

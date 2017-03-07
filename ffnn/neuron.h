@@ -1,6 +1,10 @@
 /* raz_nn -- razbit's neural network */
 /* neuron.h -- a class describing a single neuron */
 
+#ifndef NEURON_H
+#define NEURON_H
+
+
 #include <vector>
 #include <utility>
 
@@ -8,7 +12,7 @@ class Neuron
 {
 private:
 	double value;
-	int n_inputs;
+	/* Input neuron's addr and its weight */
 	std::vector<std::pair<Neuron*, double> > inputs;
 
 public:
@@ -20,10 +24,14 @@ public:
 
 	void set_value(double val);
 	void set_weight(Neuron* neuron, double weight);
+	void set_weight_i(int index, double weight);
 	double get_value();
 	double get_weight(Neuron* neuron);
-	double* get_weights();
+	double get_weight_i(int index);
 
-	inline double activation();
+	void activation();
 	inline int clamp()
 };
+
+
+#endif /* NEURON_H */
