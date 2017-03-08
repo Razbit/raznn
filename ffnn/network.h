@@ -8,14 +8,20 @@
 #include <vector>
 
 #include "neuron.h"
+#include "nntrainer.h"
+
+#define NN_RND_W_RANGE 0.5
 
 class NNetwork
 {
+	friend class NNTrainer;
+
 private:
 	std::vector<Neuron*> inputs;
 	std::vector<Neuron*> hiddens;
 	std::vector<Neuron*> outputs;
 
+	/* in range [-NN_RND_W_RANGE, NN_RND_W_RANGE] */
 	double rnd_weight();
 	
 public:

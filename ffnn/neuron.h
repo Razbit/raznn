@@ -8,8 +8,12 @@
 #include <vector>
 #include <utility>
 
+#include "nntrainer.h"
+
 class Neuron
 {
+	friend class NNTrainer;
+
 private:
 	double value;
 	/* Input neuron's addr and its weight */

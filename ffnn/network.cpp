@@ -2,6 +2,7 @@
 /* network.cpp -- a class describing a neural network */
 
 #include <vector>
+#include <stdlib.h>
 
 #include "neuron.h"
 #include "network.h"
@@ -75,4 +76,10 @@ void NNetwork::feed_forward(double* pattern, int* result = NULL)
 		for (int i = 0; i < outputs.size(); i++)
 			result[i] = outputs.at(i)->clamp();
 	}
+}
+
+double NNetwork::rnd_weight()
+{
+	double tmp = (double)(rand() - RAND_MAX / 2);
+	return tmp * (NN_RND_W_RANGE / RAND_MAX);
 }
