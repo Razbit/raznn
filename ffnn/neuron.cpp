@@ -5,9 +5,14 @@
 #include <utility>
 #include <math.h>
 
+#include "neuron.h"
+#include "logger.h"
+
 /* constructor */
-Neuron::Neuron()
+Neuron::Neuron(Logger* log)
 {
+	log->write(3, "Creating neuron %p\n", this);
+	this->log = log;
 	value = 0.0;
 }
 
@@ -19,13 +24,15 @@ Neuron::~Neuron()
 
 void Neuron::connect(Neuron* neuron, double weight)
 {
+	log->write(4, "Connecting to %p\n", neuron);
 	inputs.push_back(std::make_pair(neuron, weight));
 }
 
 void Neuron::disconnect(Neuron* neuron)
 {
+	log->write(4, "Disconnecting %p from %p\n", this, neuron);
 	/* find the pair */
-	for (int i = 0; i < n_inputs; i++)
+	for (int i = 0; i < inputs.size(); i++)
 	{
 		if (inputs.at(i).first == neuron)
 		{
@@ -37,11 +44,14 @@ void Neuron::disconnect(Neuron* neuron)
 
 void Neuron::set_value(double val)
 {
+	log->write(4, "Set value of %p to %f\n", this, val);
 	value = val;
 }
 
 void Neuron::set_weight(Neuron* neuron, double weight)
 {
+	log->write(4, "Setting weights on %p\n", this);
+	
 	for (int i = 0; i < inputs.size(); i++)
 	{
 		if (inputs.at(i).first == neuron)
@@ -73,13 +83,14 @@ double Neuron::get_weight(Neuron* neuron)
 	}
 }
 
-double* Neuron::get_weight_i(int index)
+double Neuron::get_weight_i(int index)
 {
 	return inputs.at(index).second;
 }
 
 void Neuron::activation()
 {
+	log->write(4, "Running activation funciton on %p\n", this);
 	/* calculate weighted sum of the inputs */
 	double sum = 0.0;
 	
@@ -90,7 +101,7 @@ void Neuron::activation()
 	value = 1/(1+exp(-sum));
 }
 
-inline int Neuron::clamp()
+int Neuron::clamp_neuron()
 {
 	if (value > 0.9)
 		return 1;

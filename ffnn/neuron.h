@@ -8,7 +8,9 @@
 #include <vector>
 #include <utility>
 
-#include "nntrainer.h"
+#include "logger.h"
+
+//#include "nntrainer.h"
 
 class Neuron
 {
@@ -16,11 +18,12 @@ class Neuron
 
 private:
 	double value;
+	Logger* log;
 	/* Input neuron's addr and its weight */
 	std::vector<std::pair<Neuron*, double> > inputs;
 
 public:
-	Neuron();
+	Neuron(Logger* log);
 	~Neuron();
 
 	void connect(Neuron* neuron, double weight);
@@ -34,7 +37,7 @@ public:
 	double get_weight_i(int index);
 
 	void activation();
-	inline int clamp()
+	int clamp_neuron();
 };
 
 
