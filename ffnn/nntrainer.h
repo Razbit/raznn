@@ -43,7 +43,7 @@ public:
 	NNTrainer(NNetwork* netw, std::vector<double*> t_set, size_t g_set, Logger* log);
 	~NNTrainer();
 
-	void train(double rate, double epochs, double accuracy);
+	void train(double rate, size_t epochs, double accuracy);
 
 };
 

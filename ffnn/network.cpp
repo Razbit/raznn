@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <stdlib.h>
+#include <iostream>
 
 #include "neuron.h"
 #include "network.h"
@@ -65,29 +66,37 @@ NNetwork::~NNetwork()
 /* Feed a pattern through the network */
 void NNetwork::feed_forward(double* pattern, int* result /* = NULL */)
 {
-	log->write(2, "Feeding pattern ");
+	log->write(3, "Setting input layer\n");
 	/* set input values */
 	for (int i = 0; i < inputs.size() - 1; i++)
 	{
 		inputs.at(i)->set_value(pattern[i]);
-		log->write(2, "%d ", pattern[i]);
+		std::cout << pattern[i] << " ";
 	}
 
-	log->write(3, "\n Calculating hidden layer\n");
+	std::cout << std::endl;
+
+	log->write(3, "Calculating hidden layer\n");
 
 	/* calculate hidden layer */
 	for (int i = 0; i < hiddens.size() - 1; i++)
 	{
 		hiddens.at(i)->activation();
+		std::cout << hiddens.at(i)->get_value() << " ";
 	}
+
+	std::cout << std::endl;
 
 	log->write(3, "Calculating output layer\n");
 
 	/* calculate output layer */
 	for (int i = 0; i < outputs.size(); i++)
 	{
-		hiddens.at(i)->activation();
+		outputs.at(i)->activation();
+		std::cout << outputs.at(i)->get_value() << " ";
 	}
+
+	std::cout << std::endl;
 
 	if (result)
 	{

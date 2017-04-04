@@ -13,13 +13,15 @@
 
 NNTrainer::NNTrainer(NNetwork* netw, std::vector<double*> t_set, size_t g_set, Logger* log)
 {
+	this->log = log;
+	log->write(3, "Constructing trainer..\n");
 	network = netw;
 	trainingset = t_set;
 	g_set_start = g_set;
 	start_outvals = network->inputs.size() - 1;
 	set_index = 0;
 	l_rate = 0.001;
-	this->log = log;
+	epoch = 0;
 }
 
 NNTrainer::~NNTrainer()
@@ -122,6 +124,7 @@ void NNTrainer::run_epoch(size_t size, bool test)
 {
 	/* feed, calculate errors and deltas, update weights */
 
+	log->write(3, "Epoch size %i\n", size);
 	double incorrect = 0.0;
 	double mse = 0.0;
 	int* res = new int[network->outputs.size()];
@@ -129,6 +132,7 @@ void NNTrainer::run_epoch(size_t size, bool test)
 	for (int i = 0; i < size; i++)
 	{
 		log->write(2, "Feeding set %d\n", i);
+		log->write(2, "set index: %i\n", set_index);
 		network->feed_forward(trainingset.at(set_index), res);
 
 		if (!test)
@@ -154,21 +158,21 @@ void NNTrainer::run_epoch(size_t size, bool test)
 		set_index++;
 	}
 
-	accuracy = 100 - (incorrect / size * 100);
-	mse = mse / (network->outputs.size() * size);
+	this->accuracy = 100 - (incorrect / size * 100);
+	this->mse = mse / (network->outputs.size() * size);
 	epoch++;
 }
 
-void NNTrainer::train(double rate, double epochs, double accuracy)
+void NNTrainer::train(double rate, size_t epochs, double accuracy)
 {
 	l_rate = rate;
 
 	size_t epoch_size = g_set_start/epochs;
 
 	/* train */
-	while(this->accuracy < accuracy || this->epoch == epochs)
+	while(this->accuracy < accuracy && this->epoch < epochs)
 	{
-		log->write(1, "Epoch %d of %d..\n", epoch, epochs);
+		log->write(1, "Epoch %d of %d..\n", epoch+1, epochs);
 		run_epoch(epoch_size, false);
 		log->write(1, "Epoch over, MSE: %f Acc%%: %f\n", this->mse, this->accuracy);
 	}
